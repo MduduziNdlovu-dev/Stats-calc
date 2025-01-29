@@ -18,7 +18,7 @@
       <h1>Statistics Calculator 📊</h1>
       <p>Enter numbers separated by commas to get statistical insights.</p>
 
-      <form id="stats-form">
+      <form onsubmit="calculate(); return false;">
         <input type="text" id="numbers" placeholder="E.g. 10, 20, 30, 40, 50" />
         <div class="buttons">
           <button type="submit">Calculate</button>
@@ -46,6 +46,12 @@
         <button onclick="generateChart('pie')">Pie Chart</button>
         <button onclick="generateChart('line')">Line Chart</button>
         <button onclick="generateChart('histogram')">Histogram</button>
+      </div>
+
+      <!-- Linear Regression Button -->
+      <h2>Improvements</h2>
+      <div class="improvement-buttons">
+        <button onclick="generateLinearRegressionChart()">Linear Regression</button>
       </div>
 
       <!-- Data Export Buttons -->

@@ -1,38 +1,13 @@
-// Dark/Light Mode Toggle
-const themeToggleButton = document.getElementById('theme-toggle');
-themeToggleButton.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-  localStorage.setItem('theme', currentTheme);
-});
+let chartInstance = null; // Declare chartInstance outside the function to keep track of the chart.
 
-// Set theme based on localStorage
-document.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-  }
-});
-
-// Statistical Calculations
-document.getElementById("stats-form").addEventListener("submit", function (event) {
-  event.preventDefault();
-  calculate();
-});
-
-document.getElementById("clear-btn").addEventListener("click", function () {
-  document.getElementById("numbers").value = "";
-  document.querySelectorAll(".results span").forEach(span => (span.textContent = "-"));
-  if (chartInstance) chartInstance.destroy();
-});
-
-let chartInstance = null;
-
-// Custom Calculation Function
+// Custom Calculation Function (with Regression and Filtering)
 const calculate = () => {
   const value = document.querySelector('#numbers').value;
   const array = value.split(/,\s*/g);
-  const numbers = array.map(num => Number(num)).filter(el => !isNaN(el));
+  let numbers = array.map(num => Number(num)).filter(el => !isNaN(el));
+
+  // Remove outliers before processing
+  numbers = removeOutliers(numbers);
 
   if (numbers.length === 0) {
     document.getElementById("error-message").textContent = "⚠️ Please enter valid numbers!";
@@ -48,6 +23,7 @@ const calculate = () => {
   const variance = getVariance(numbers);
   const standardDeviation = getStandardDeviation(numbers);
 
+  // Display results
   document.querySelector("#mean").textContent = mean;
   document.querySelector("#median").textContent = median;
   document.querySelector("#mode").textContent = mode;
@@ -56,9 +32,111 @@ const calculate = () => {
   document.querySelector("#standardDeviation").textContent = standardDeviation;
 };
 
-// Statistical Helper Functions
-const getMean = (array) => array.reduce((acc, el) => acc + el, 0) / array.length;
+// Regression calculation (linear)
+const calculateRegression = (numbers) => {
+  const n = numbers.length;
+  const meanX = getMean([...Array(n).keys()]); // Mean of indices
+  const meanY = getMean(numbers);
 
+  let numerator = 0;
+  let denominator = 0;
+
+  for (let i = 0; i < n; i++) {
+    numerator += (i - meanX) * (numbers[i] - meanY);
+    denominator += (i - meanX) ** 2;
+  }
+
+  const slope = numerator / denominator;
+  const intercept = meanY - slope * meanX;
+
+  return { slope, intercept };
+};
+
+// Chart generation with regression line (linear regression chart)
+function generateLinearRegressionChart() {
+  const value = document.querySelector('#numbers').value;
+  const array = value.split(/,\s*/g);
+  let numbers = array.map(num => Number(num)).filter(el => !isNaN(el));
+
+  if (numbers.length === 0) {
+    document.getElementById("error-message").textContent = "⚠️ Please enter valid numbers!";
+    return;
+  }
+
+  const regression = calculateRegression(numbers);
+
+  const ctx = document.getElementById("chart").getContext("2d");
+  if (chartInstance) chartInstance.destroy();
+
+  let data = {
+    labels: numbers.map((_, i) => `Data ${i + 1}`),
+    datasets: [
+      {
+        label: "Values",
+        data: numbers.map((value, idx) => ({ x: idx, y: value })), // Map numbers for scatter plot
+        backgroundColor: "#36a2eb",
+        borderColor: "#0056b3",
+        borderWidth: 1,
+        pointRadius: 5,
+        type: 'scatter',
+        fill: false
+      },
+      {
+        label: "Regression Line",
+        data: numbers.map((_, idx) => ({
+          x: idx,
+          y: regression.slope * idx + regression.intercept
+        })),
+        borderColor: 'rgba(255, 99, 132, 0.8)',
+        type: 'line',
+        fill: false
+      }
+    ]
+  };
+
+  chartInstance = new Chart(ctx, {
+    type: 'scatter',
+    data: data,
+    options: {
+      scales: {
+        x: { title: { display: true, text: 'Index' } },
+        y: { title: { display: true, text: 'Values' } }
+      }
+    }
+  });
+}
+
+function generateChart(type) {
+    let input = document.getElementById("numbers").value;
+    let numbers = input.split(",").map(num => parseFloat(num.trim())).filter(num => !isNaN(num));
+  
+    if (numbers.length === 0) {
+      document.getElementById("error-message").textContent = "⚠️ Please enter valid numbers!";
+      return;
+    }
+  
+    const ctx = document.getElementById("chart").getContext("2d");
+    if (chartInstance) chartInstance.destroy();
+  
+    let data = {
+      labels: numbers.map((_, i) => `Data ${i + 1}`),
+      datasets: [{
+        label: "Values",
+        data: numbers,
+        backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0"],
+        borderColor: "#0056b3",
+        borderWidth: 1
+      }]
+    };
+  
+    chartInstance = new Chart(ctx, {
+      type: type === "histogram" ? "bar" : type,
+      data: data
+    });
+  }
+
+// Statistical Helper Functions (same as before)
+const getMean = (array) => array.reduce((acc, el) => acc + el, 0) / array.length;
 const getMedian = (array) => {
   const sorted = array.toSorted((a, b) => a - b);
   const median = sorted.length % 2 === 0
@@ -66,7 +144,6 @@ const getMedian = (array) => {
     : sorted[Math.floor(sorted.length / 2)];
   return median;
 };
-
 const getMode = (array) => {
   const counts = {};
   array.forEach((el) => {
@@ -80,11 +157,9 @@ const getMode = (array) => {
 
   return mode.join(", ");
 };
-
 const getRange = (array) => {
   return Math.max(...array) - Math.min(...array);
 };
-
 const getVariance = (array) => {
   const mean = getMean(array);
   const variance = array.reduce((acc, el) => {
@@ -94,56 +169,20 @@ const getVariance = (array) => {
   }, 0) / array.length;
   return variance;
 };
-
 const getStandardDeviation = (array) => {
   const variance = getVariance(array);
   return Math.sqrt(variance);
 };
 
-// Generate Graphs (Bar, Pie, Line, Histogram)
-function generateChart(type) {
-  let input = document.getElementById("numbers").value;
-  let numbers = input.split(",").map(num => parseFloat(num.trim())).filter(num => !isNaN(num));
+// Outlier Removal using IQR method
+const removeOutliers = (numbers) => {
+  const sorted = numbers.slice().sort((a, b) => a - b);
+  const q1 = getMedian(sorted.slice(0, Math.floor(sorted.length / 2)));
+  const q3 = getMedian(sorted.slice(Math.ceil(sorted.length / 2)));
+  const iqr = q3 - q1;
 
-  if (numbers.length === 0) {
-    document.getElementById("error-message").textContent = "⚠️ Please enter valid numbers!";
-    return;
-  }
+  const lowerBound = q1 - 1.5 * iqr;
+  const upperBound = q3 + 1.5 * iqr;
 
-  const ctx = document.getElementById("chart").getContext("2d");
-  if (chartInstance) chartInstance.destroy();
-
-  let data = {
-    labels: numbers.map((_, i) => `Data ${i + 1}`),
-    datasets: [{
-      label: "Values",
-      data: numbers,
-      backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0"],
-      borderColor: "#0056b3",
-      borderWidth: 1
-    }]
-  };
-
-  chartInstance = new Chart(ctx, {
-    type: type === "histogram" ? "bar" : type,
-    data: data
-  });
-}
-
-// Data Export (CSV and Copy Link)
-document.getElementById('download-csv').addEventListener('click', function() {
-  let numbers = document.getElementById("numbers").value.split(",").map(num => parseFloat(num.trim())).filter(num => !isNaN(num));
-  if (numbers.length === 0) return alert('No data to export.');
-
-  const csvContent = "data:text/csv;charset=utf-8," + numbers.join(",") + "\n";
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "statistics_data.csv");
-  link.click();
-});
-
-document.getElementById('copy-link').addEventListener('click', function() {
-  const link = window.location.href + "?data=" + encodeURIComponent(document.getElementById("numbers").value);
-  navigator.clipboard.writeText(link).then(() => alert('Link copied to clipboard!'));
-});
+  return numbers.filter(num => num >= lowerBound && num <= upperBound);
+};
