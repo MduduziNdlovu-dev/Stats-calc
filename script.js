@@ -30,6 +30,30 @@ const calculate = () => {
   document.querySelector("#range").textContent = range;
   document.querySelector("#variance").textContent = variance;
   document.querySelector("#standardDeviation").textContent = standardDeviation;
+
+  // Provide AI-Powered Insights
+  provideInsights(numbers);
+};
+
+// AI-Powered Insights Function
+const provideInsights = (numbers) => {
+  const mean = getMean(numbers);
+  const standardDeviation = getStandardDeviation(numbers);
+
+  let insightsMessage = "Here are some insights based on the data: ";
+  if (mean > 50) {
+    insightsMessage += "The mean is relatively high, suggesting that most of the data points are on the higher side. ";
+  } else {
+    insightsMessage += "The mean is relatively low, suggesting that most of the data points are on the lower side. ";
+  }
+
+  if (standardDeviation > 10) {
+    insightsMessage += "The data shows a high level of variability, which means the values are spread out. ";
+  } else {
+    insightsMessage += "The data is relatively consistent, with low variability. ";
+  }
+
+  document.getElementById("insights-message").textContent = insightsMessage;
 };
 
 // Regression calculation (linear)
