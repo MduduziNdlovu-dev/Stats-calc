@@ -91,11 +91,11 @@ By integrating the **Data Insights** feature into your **Advanced Statistics Cal
 ---
 
 ## Future Improvements
-1. **AI-Powered Insights**: Add features to analyze the data and suggest meaningful insights or trends based on the numbers entered.
-2. **Data Filtering**: Implement the ability to filter out certain values from the dataset (e.g., remove outliers).
-3. **User Profiles**: Allow users to save their data and revisit their past calculations with a user authentication system.
-4. **Mobile App Version**: Create a mobile app version of the calculator for easier access on-the-go.
-5. **Advanced Statistical Methods**: Integrate more complex statistical analyses, such as regression models, to further enhance the tool's capabilities.
+
+
+1. **User Profiles**: Allow users to save their data and revisit their past calculations with a user authentication system.
+2. **Mobile App Version**: Create a mobile app version of the calculator for easier access on-the-go.
+
 
 ---
 
