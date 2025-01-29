@@ -3,52 +3,59 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./styles.css" />
-    <script src="./script.js"></script>
-    <title>Statistics Calculator</title>
+    <title>Advanced Statistics Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js" defer></script>
   </head>
   <body>
-    <h1>Statistics Calculator</h1>
-    <p>Enter a list of comma-separated numbers.</p>
+    <div class="container">
+      <!-- Dark/Light Mode Toggle -->
+      <div class="mode-toggle">
+        <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+      </div>
 
-    <form onsubmit="calculate() ;return false">
-      <label for="numbers">Numbers:</label>
-      <input type="text" name="numbers" id="numbers" />
-      <button type="submit">Calculate</button>
-    </form>
-    <div class="results">
-      <p>
-        The <dfn>mean</dfn> of a list of numbers is the average, calculated by
-        taking the sum of all numbers and dividing that by the count of numbers.
-      </p>
-      <p class="bold">Mean: <span id="mean"></span></p>
-      <p>
-        The <dfn>median</dfn> of a list of numbers is the number that appears in
-        the middle of the list, when sorted from least to greatest.
-      </p>
-      <p class="bold">Median: <span id="median"></span></p>
-      <p>
-        The <dfn>mode</dfn> of a list of numbers is the number that appears most
-        often in the list.
-      </p>
-      <p class="bold">Mode: <span id="mode"></span></p>
-      <p>
-        The <dfn>range</dfn> of a list of numbers is the difference between the
-        largest and smallest numbers in the list.
-      </p>
-      <p class="bold">Range: <span id="range"></span></p>
-      <p>
-        The <dfn>variance</dfn> of a list of numbers measures how far the values
-        are from the mean, on average.
-      </p>
-      <p class="bold">Variance: <span id="variance"></span></p>
-      <p>
-        The <dfn>standard deviation</dfn> of a list of numbers is the square
-        root of the variance.
-      </p>
-      <p class="bold">
-        Standard Deviation: <span id="standardDeviation"></span>
-      </p>
+      <h1>Statistics Calculator 📊</h1>
+      <p>Enter numbers separated by commas to get statistical insights.</p>
+
+      <form id="stats-form">
+        <input type="text" id="numbers" placeholder="E.g. 10, 20, 30, 40, 50" />
+        <div class="buttons">
+          <button type="submit">Calculate</button>
+          <button type="button" id="clear-btn">Clear</button>
+        </div>
+      </form>
+
+      <div id="error-message"></div>
+
+      <!-- Results Section -->
+      <div class="results">
+        <h2>Results</h2>
+        <p><strong>Mean:</strong> <span id="mean">-</span></p>
+        <p><strong>Median:</strong> <span id="median">-</span></p>
+        <p><strong>Mode:</strong> <span id="mode">-</span></p>
+        <p><strong>Range:</strong> <span id="range">-</span></p>
+        <p><strong>Variance:</strong> <span id="variance">-</span></p>
+        <p><strong>Standard Deviation:</strong> <span id="standardDeviation">-</span></p>
+      </div>
+
+      <!-- Graph Selection Buttons -->
+      <h2>Choose Graph</h2>
+      <div class="graph-buttons">
+        <button onclick="generateChart('bar')">Bar Chart</button>
+        <button onclick="generateChart('pie')">Pie Chart</button>
+        <button onclick="generateChart('line')">Line Chart</button>
+        <button onclick="generateChart('histogram')">Histogram</button>
+      </div>
+
+      <!-- Data Export Buttons -->
+      <div class="export-buttons">
+        <button id="download-csv">Download CSV</button>
+        <button id="copy-link">Copy Link</button>
+      </div>
+
+      <!-- Chart Canvas -->
+      <canvas id="chart"></canvas>
     </div>
   </body>
 </html>
