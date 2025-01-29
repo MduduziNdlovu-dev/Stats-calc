@@ -10,64 +10,73 @@
   </head>
   <body>
     <div class="container">
-      <!-- Dark/Light Mode Toggle -->
-      <div class="mode-toggle">
-        <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
-      </div>
+        <div class="content-left">
+          <!-- Dark/Light Mode Toggle -->
+          <div class="mode-toggle">
+            <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+          </div>
+      
+          <h1>Statistics Calculator 📊</h1>
+          <p>Enter numbers separated by commas to get statistical insights.</p>
+      
+          <form onsubmit="calculate(); return false;">
+            <input type="text" id="numbers" placeholder="E.g. 10, 20, 30, 40, 50" />
+            <div class="buttons">
+              <button type="submit">Calculate</button>
+              <button type="button" id="clear-btn">Clear</button>
+            </div>
+          </form>
+      
+          <div id="error-message"></div>
+      
+          <!-- Results Section -->
+          <div class="results">
+            <h2>Results</h2>
+            <p><strong>Mean:</strong> <span id="mean">-</span></p>
+            <p><strong>Median:</strong> <span id="median">-</span></p>
+            <p><strong>Mode:</strong> <span id="mode">-</span></p>
+            <p><strong>Range:</strong> <span id="range">-</span></p>
+            <p><strong>Variance:</strong> <span id="variance">-</span></p>
+            <p><strong>Standard Deviation:</strong> <span id="standardDeviation">-</span></p>
+          </div>
+          <canvas id="chart"></canvas>
 
-      <h1>Statistics Calculator 📊</h1>
-      <p>Enter numbers separated by commas to get statistical insights.</p>
-
-      <form onsubmit="calculate(); return false;">
-        <input type="text" id="numbers" placeholder="E.g. 10, 20, 30, 40, 50" />
-        <div class="buttons">
-          <button type="submit">Calculate</button>
-          <button type="button" id="clear-btn">Clear</button>
         </div>
-      </form>
+      
+        <!-- Sidebar with Insights and Graphs -->
+        <div class="content-right">
+         
+      
+          <!-- Graph Selection Buttons -->
+          <h2>Choose Graph</h2>
+          <div class="graph-buttons">
+            <button onclick="generateChart('bar')">Bar Chart</button>
+            <button onclick="generateChart('pie')">Pie Chart</button>
+            <button onclick="generateChart('line')">Line Chart</button>
+            <button onclick="generateChart('histogram')">Histogram</button>
+          </div>
+      
+          <!-- Linear Regression Button -->
+          <h2>Improvements</h2>
+          <div class="improvement-buttons">
+            <button onclick="generateLinearRegressionChart()">Linear Regression</button>
+          </div>
+      
+          <!-- Data Export Buttons -->
+          <div class="export-buttons">
+            <button id="download-csv">Download CSV</button>
+            <button id="copy-link">Copy Link</button>
+          </div>
 
-      <div id="error-message"></div>
-
-      <!-- Results Section -->
-      <div class="results">
-        <h2>Results</h2>
-        <p><strong>Mean:</strong> <span id="mean">-</span></p>
-        <p><strong>Median:</strong> <span id="median">-</span></p>
-        <p><strong>Mode:</strong> <span id="mode">-</span></p>
-        <p><strong>Range:</strong> <span id="range">-</span></p>
-        <p><strong>Variance:</strong> <span id="variance">-</span></p>
-        <p><strong>Standard Deviation:</strong> <span id="standardDeviation">-</span></p>
+           <!-- Insights Section -->
+           <div id="insights" class="insights">
+            <h2>Data Insights</h2>
+            <p id="insights-message">-</p>
+          </div>
+      
+          <!-- Chart Canvas -->
+        </div>
       </div>
-
-      <!-- Insights Section -->
-      <div id="insights" class="insights">
-        <h2>Data Insights</h2>
-        <p id="insights-message">-</p>
-      </div>
-
-      <!-- Graph Selection Buttons -->
-      <h2>Choose Graph</h2>
-      <div class="graph-buttons">
-        <button onclick="generateChart('bar')">Bar Chart</button>
-        <button onclick="generateChart('pie')">Pie Chart</button>
-        <button onclick="generateChart('line')">Line Chart</button>
-        <button onclick="generateChart('histogram')">Histogram</button>
-      </div>
-
-      <!-- Linear Regression Button -->
-      <h2>Improvements</h2>
-      <div class="improvement-buttons">
-        <button onclick="generateLinearRegressionChart()">Linear Regression</button>
-      </div>
-
-      <!-- Data Export Buttons -->
-      <div class="export-buttons">
-        <button id="download-csv">Download CSV</button>
-        <button id="copy-link">Copy Link</button>
-      </div>
-
-      <!-- Chart Canvas -->
-      <canvas id="chart"></canvas>
-    </div>
+      
   </body>
 </html>

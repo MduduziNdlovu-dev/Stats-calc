@@ -1,3 +1,27 @@
+// Dark Mode Toggle
+const themeToggleButton = document.getElementById("theme-toggle");
+
+themeToggleButton.addEventListener("click", () => {
+  // Toggle dark mode class on the body
+  document.body.classList.toggle("dark-mode");
+
+  // Optional: Save the theme preference in localStorage
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+  } else {
+    localStorage.setItem("theme", "light");
+  }
+});
+
+// Load the saved theme preference on page load
+window.addEventListener("load", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode");
+  }
+});
+
+
 let chartInstance = null; // Declare chartInstance outside the function to keep track of the chart.
 
 // Custom Calculation Function (with Regression and Filtering)
